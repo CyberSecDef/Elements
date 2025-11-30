@@ -170,6 +170,48 @@
             "value": null,
             "note": "Costs vary widely by production route and region; typical contemporary ranges: grey ~1–3 USD/kg, blue ~2–7 USD/kg, green ~3–15+ USD/kg, retail fuel often ~10–16 USD/kg."
         },
+        "history": [
+            {
+                "event": "Early Observations",
+                "year": 1671,
+                "details": "Robert Boyle produced hydrogen gas by reacting iron filings with dilute acids, observing its flammability, though he did not identify it as a distinct element."
+            },
+            {
+                "event": "Discovery and Isolation",
+                "year": 1766,
+                "details": "Henry Cavendish systematically studied 'inflammable air' produced from metal-acid reactions, measuring its density and properties, and is credited with the discovery of hydrogen as a distinct substance."
+            },
+            {
+                "event": "Naming and Composition of Water",
+                "year": 1783,
+                "details": "Antoine Lavoisier named the element 'hydrogen' (from Greek hydro genes, 'water-former') after demonstrating that water is composed of hydrogen and oxygen, not an elemental substance."
+            },
+            {
+                "event": "Discovery of Deuterium",
+                "year": 1931,
+                "details": "Harold Urey discovered deuterium (heavy hydrogen, ²H) through spectroscopic analysis of hydrogen, for which he was awarded the 1934 Nobel Prize in Chemistry."
+            },
+            {
+                "event": "Discovery of Tritium",
+                "year": 1934,
+                "details": "Ernest Rutherford, Mark Oliphant, and Paul Harteck produced tritium (³H) by bombarding deuterium with high-energy deuterons, identifying the radioactive isotope with a 12-year half-life."
+            },
+            {
+                "event": "First Hydrogen Bomb",
+                "year": 1952,
+                "details": "The United States detonated the first thermonuclear device (Ivy Mike) using deuterium-tritium fusion, demonstrating controlled release of fusion energy on a massive scale."
+            },
+            {
+                "event": "Hydrogen Fuel Cell Development",
+                "year": 1959,
+                "details": "Francis Thomas Bacon demonstrated a practical hydrogen-oxygen fuel cell, leading to adoption in space programs (Apollo, Space Shuttle) and later in commercial fuel cell vehicles."
+            },
+            {
+                "event": "Metallic Hydrogen Prediction",
+                "year": 1935,
+                "details": "Eugene Wigner and Hillard Bell Huntington predicted that hydrogen would become metallic under extreme pressure, a phase with potential superconducting properties that remains an active area of high-pressure physics research."
+            }
+        ],
         "description": "Hydrogen is the lightest and most abundant element in the universe, accounting for the majority of ordinary (baryonic) matter and serving as the primary fuel for stellar fusion. On Earth it exists mainly as the diatomic gas H2, a colorless, odorless, highly flammable molecule with very low density and high thermal conductivity. Chemically, hydrogen forms covalent bonds with nonmetals and polar covalent or ionic hydrides with electropositive metals, appearing most commonly in the +1 oxidation state but also as −1 in metal hydrides. Its isotopes protium, deuterium, and radioactive tritium underpin applications ranging from heavy water reactors to fusion research and radiotracing. Industrial hydrogen is produced at scale for ammonia synthesis, petroleum refining, methanol production, and emerging energy-carrier roles such as fuel cells and synthetic fuels. Under extreme pressures, hydrogen exhibits complex phase behavior, including predicted metallic and superconducting states, making it central to planetary physics and high-pressure research as well as practical cryogenic engineering.",
         "group": 1,
         "period": 1,
@@ -331,6 +373,38 @@
             "value": null,
             "note": "Market price varies widely by purity, form (bulk liquid vs. compressed gas), and region; helium is significantly more expensive than typical industrial gases and has experienced periodic supply shortages."
         },
+        "history": [
+            {
+                "event": "Solar Spectroscopic Discovery",
+                "year": 1868,
+                "details": "Pierre Janssen observed a yellow spectral line in sunlight during a solar eclipse in India, and Norman Lockyer and Edward Frankland subsequently identified it as belonging to a new element, naming it 'helium' from the Greek 'helios' (sun)—the first element discovered outside Earth."
+            },
+            {
+                "event": "Terrestrial Discovery",
+                "year": 1895,
+                "details": "Per Teodor Cleve and Nils Abraham Langlet independently isolated helium from the uranium mineral cleveite in Sweden, and William Ramsay extracted it from cleveite in Britain, confirming the existence of helium on Earth for the first time."
+            },
+            {
+                "event": "Discovery of Superfluidity",
+                "year": 1937,
+                "details": "Pyotr Kapitsa in the Soviet Union and independently John F. Allen and Don Misener in Cambridge discovered that liquid helium-4 below 2.17 K (the lambda point) exhibits superfluidity—flowing without viscosity and displaying extraordinary thermal conductivity."
+            },
+            {
+                "event": "Discovery of Helium-3 Superfluidity",
+                "year": 1972,
+                "details": "Douglas Osheroff, David Lee, and Robert Richardson discovered that helium-3 becomes superfluid at temperatures below 0.003 K, revealing exotic quantum pairing mechanisms and earning them the 1996 Nobel Prize in Physics."
+            },
+            {
+                "event": "Helium Shortage and Conservation Efforts",
+                "year": 1996,
+                "details": "The U.S. Helium Privatization Act mandated the sale of the Federal Helium Reserve, leading to market disruptions and growing awareness of helium as a finite, non-renewable resource requiring conservation and strategic management."
+            },
+            {
+                "event": "First Helium Compound",
+                "year": 2017,
+                "details": "Scientists at the Max Planck Institute synthesized sodium helide (Na₂He) under extreme pressure (~113 GPa), marking the first stable compound containing helium and challenging the notion of helium's absolute chemical inertness."
+            }
+        ],
         "description": "Helium is the second-lightest element and the first noble gas, occurring as a colorless, odorless, monatomic gas that is extraordinarily inert chemically. Its 1s2 electron configuration gives it a closed shell, so helium forms no stable ordinary compounds under ambient conditions, and its only common oxidation state is 0. Physically, helium is notable for having the lowest boiling point of any element, liquefying at about 4.2 K, and it does not solidify at 1 atm regardless of temperature. Under modest pressures, helium-4 forms quantum liquids that exhibit superfluidity below the lambda point, with extremely high thermal conductivity and zero-viscosity flow. Industrially, helium is produced mainly from natural gas fields where it accumulates as a by-product of alpha decay in the crust. It is used as a cryogenic refrigerant for superconducting magnets in MRI scanners and particle accelerators, as a protective inert atmosphere in welding and semiconductor processing, as a lifting gas, and in specialized breathing mixtures for deep diving. Its stable isotopes, helium-3 and helium-4, play key roles in low-temperature physics and neutron detection, while short-lived radioisotopes provide insights into nuclear structure and geochemical processes.",
         "group": 18,
         "period": 1,
@@ -18933,6 +19007,23 @@
             "value": null,
             "note": "Unbinilium has not yet been discovered; no production cost exists. All values here are theoretical or placeholders."
         },
+        "history": [
+            {
+                "event": "Prediction of Existence",
+                "year": 1970,
+                "details": "Theoretical predictions based on nuclear shell models suggested the possibility of synthesizing elements beyond oganesson, including element 120."
+            },
+            {
+                "event": "First Synthesis Attempts",
+                "year": 2000,
+                "details": "Several experimental campaigns were initiated at facilities such as GSI Helmholtz Centre for Heavy Ion Research and Joint Institute for Nuclear Research to synthesize element 120 using heavy-ion fusion reactions."
+            },
+            {
+                "event": "Ongoing Research",
+                "year": 2020,
+                "details": "Continued efforts are being made to synthesize unbinilium, with advancements in accelerator technology and detection methods enhancing the chances of discovery."
+            }
+        ],
         "description": "Unbinilium is the temporary systematic IUPAC name for element 120, expected to be the second member of the eighth period and an alkaline earth metal in group 2. It has not yet been synthesized despite several high-profile experimental campaigns. If produced, it would be the heaviest element yet created and a key waypoint on the path toward the island of stability. Theoretical models predict that it will behave as a heavy s-block metal with a predominant +2 oxidation state, but relativistic effects on the 8s electrons may significantly alter its bonding and reactivity compared with barium and radium. All physical and chemical properties listed here are approximate and model-dependent, used only to give reasonable numeric placeholders for visualization until experimental data become available.",
         "group": 2,
         "period": 8,

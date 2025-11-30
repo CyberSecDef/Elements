@@ -28,7 +28,7 @@
     <!-- Sticky Status Bar -->
     <header id="statusBar" class="sticky-top">
         <div class="container-fluid">
-            <div class="row align-items-center py-2">
+            <div class="row align-items-center py-2 g-2">
                 <div class="col-auto">
                     <h1 class="brand mb-0">
                         <span class="brand-icon">🧪</span>
@@ -36,21 +36,60 @@
                     </h1>
                 </div>
                 
-                <div class="col">
-                    <div class="status-info">
-                        <span id="connDot" class="dot offline"></span>
-                        <span id="connText">Connecting…</span>
-                        <span class="sep">•</span>
-                        <span>Clients: <span id="clientCount">0</span></span>
-                        <span class="sep">•</span>
-                        <span>Elements: <span id="elementCount">0</span></span>
+                <div class="col-12 col-md">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                class="form-control form-control-sm" 
+                                placeholder="Search elements..."
+                                aria-label="Search elements"
+                            />
+                        </div>
+                        
+                        <div class="col-12 col-sm-6 col-md-3">
+                            <select id="categoryFilter" class="form-select form-select-sm" aria-label="Filter by category">
+                                <option value="all">All Categories</option>
+                                <option value="alkali metal">Alkali Metals</option>
+                                <option value="alkaline earth metal">Alkaline Earth</option>
+                                <option value="transition metal">Transition Metals</option>
+                                <option value="post-transition metal">Post-Transition</option>
+                                <option value="metalloid">Metalloids</option>
+                                <option value="diatomic nonmetal">Diatomic Nonmetals</option>
+                                <option value="polyatomic nonmetal">Polyatomic Nonmetals</option>
+                                <option value="noble gas">Noble Gases</option>
+                                <option value="lanthanide">Lanthanides</option>
+                                <option value="actinide">Actinides</option>
+                            </select>
+                        </div>
+                        
+                        <div class="col-auto">
+                            <button id="clearFilters" class="btn btn-secondary btn-sm">
+                                Clear
+                            </button>
+                        </div>
+
+                        <div class="col">
+                            <div class="legend-compact-inline d-none d-lg-flex">
+                                <span class="legend-item"><span class="legend-color" style="background: #ff6b6b;"></span>Alkali</span>
+                                <span class="legend-item"><span class="legend-color" style="background: #ffd93d;"></span>Alkaline</span>
+                                <span class="legend-item"><span class="legend-color" style="background: #6bcf7f;"></span>Transition</span>
+                                <span class="legend-item"><span class="legend-color" style="background: #4ecdc4;"></span>Nonmetal</span>
+                                <span class="legend-item"><span class="legend-color" style="background: #c44569;"></span>Noble</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
                 <div class="col-auto">
-                    <button id="themeToggle" class="btn btn-outline-secondary btn-sm" title="Toggle theme">
-                        🌙
-                    </button>
+                    <div class="d-flex align-items-center gap-2">
+                        <span id="connDot" class="dot offline"></span>
+                        <span id="connText" class="d-none d-md-inline">Connecting…</span>
+                        <button id="themeToggle" class="btn btn-outline-secondary btn-sm" title="Toggle theme">
+                            🌙
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -58,62 +97,10 @@
 
     <!-- Main Content -->
     <main id="mainContent" class="container-fluid py-4">
-        <!-- Controls Section -->
-        <div class="row mb-4">
+        <!-- Periodic Table -->
+        <div class="row">
             <div class="col-12">
-                <div class="card shadow-sm">
-                    <div class="card-body">
-                        <div class="row g-3 align-items-center">
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <label for="searchInput" class="form-label mb-1">Search Elements</label>
-                                <input 
-                                    type="text" 
-                                    id="searchInput" 
-                                    class="form-control" 
-                                    placeholder="Search by name, symbol, or number..."
-                                    aria-label="Search elements"
-                                />
-                            </div>
-                            
-                            <div class="col-12 col-md-4 col-lg-3">
-                                <label for="categoryFilter" class="form-label mb-1">Filter by Category</label>
-                                <select id="categoryFilter" class="form-select" aria-label="Filter by category">
-                                    <option value="all">All Categories</option>
-                                    <option value="alkali metal">Alkali Metals</option>
-                                    <option value="alkaline earth metal">Alkaline Earth</option>
-                                    <option value="transition metal">Transition Metals</option>
-                                    <option value="post-transition metal">Post-Transition</option>
-                                    <option value="metalloid">Metalloids</option>
-                                    <option value="diatomic nonmetal">Diatomic Nonmetals</option>
-                                    <option value="polyatomic nonmetal">Polyatomic Nonmetals</option>
-                                    <option value="noble gas">Noble Gases</option>
-                                    <option value="lanthanide">Lanthanides</option>
-                                    <option value="actinide">Actinides</option>
-                                </select>
-                            </div>
-                            
-                            <div class="col-12 col-md-2 col-lg-2">
-                                <label class="form-label mb-1 d-none d-md-block">&nbsp;</label>
-                                <button id="clearFilters" class="btn btn-secondary w-100">
-                                    Clear Filters
-                                </button>
-                            </div>
-
-                            <div class="col-12 col-lg-3">
-                                <div class="legend-compact">
-                                    <small class="text-muted d-block mb-1">Legend</small>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        <span class="legend-item"><span class="legend-color" style="background: #ff6b6b;"></span>Alkali</span>
-                                        <span class="legend-item"><span class="legend-color" style="background: #ffd93d;"></span>Alkaline</span>
-                                        <span class="legend-item"><span class="legend-color" style="background: #6bcf7f;"></span>Transition</span>
-                                        <span class="legend-item"><span class="legend-color" style="background: #4ecdc4;"></span>Nonmetal</span>
-                                        <span class="legend-item"><span class="legend-color" style="background: #c44569;"></span>Noble</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <div id="periodicTable" class="periodic-table-container"></div>
             </div>
         </div>
 
@@ -135,9 +122,12 @@
                                 </div>
                             </div>
                             <div class="col-12 col-md-6">
-                                <div class="d-flex gap-2 justify-content-md-end">
+                                <div class="d-flex gap-2 justify-content-md-end flex-wrap">
                                     <button id="buildCompoundBtn" class="btn btn-primary" disabled>
                                         🔬 Build Compound
+                                    </button>
+                                    <button id="compareElementsBtn" class="btn btn-info" disabled>
+                                        📊 Compare Elements
                                     </button>
                                     <button id="clearSelectionBtn" class="btn btn-outline-secondary" disabled>
                                         Clear Selection
@@ -150,12 +140,7 @@
             </div>
         </div>
 
-        <!-- Periodic Table -->
-        <div class="row">
-            <div class="col-12">
-                <div id="periodicTable" class="periodic-table-container"></div>
-            </div>
-        </div>
+        
     </main>
 
     <!-- Element Details Modal -->
@@ -190,6 +175,26 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="compoundModalBody">
+                    <!-- Content will be dynamically generated -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Element Comparison Modal -->
+    <div class="modal fade" id="comparisonModal" tabindex="-1" aria-labelledby="comparisonModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="comparisonModalLabel">
+                        📊 Element Comparison
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="comparisonModalBody">
                     <!-- Content will be dynamically generated -->
                 </div>
                 <div class="modal-footer">

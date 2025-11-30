@@ -113,6 +113,29 @@ body {
   flex-wrap: wrap;
 }
 
+.legend-compact-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.legend-compact-inline .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+.legend-compact-inline .legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+
 .dot {
   width: 10px;
   height: 10px;
@@ -455,6 +478,65 @@ body {
   margin-bottom: 1rem;
 }
 
+/* ===== Element Comparison Styles ===== */
+.comparison-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.comparison-table table {
+  width: 100%;
+  min-width: 600px;
+}
+
+.comparison-table th {
+  background-color: var(--bg-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 0.75rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.comparison-table .element-header {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.comparison-table .element-symbol-header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.comparison-table .element-name-header {
+  font-size: 0.9rem;
+  font-weight: normal;
+  color: var(--text-secondary);
+}
+
+.comparison-table td {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
+}
+
+.comparison-table .property-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.comparison-table .property-value {
+  text-align: center;
+}
+
+.comparison-table tr:hover {
+  background-color: var(--bg-secondary);
+}
+
 /* ===== F-Block (Lanthanides & Actinides) ===== */
 .f-block-container {
   margin-top: 2rem;
@@ -554,6 +636,188 @@ body {
   text-align: justify;
   line-height: 1.7;
   color: var(--text-secondary);
+}
+
+/* ===== Historical Timeline ===== */
+.horizontal-timeline {
+  margin: 1.5rem 0 2rem 0;
+  padding: 1rem 0;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.horizontal-timeline-track {
+  position: relative;
+  height: 80px;
+  margin: 0 2rem;
+  background: linear-gradient(to right, 
+    var(--border-color) 0%, 
+    var(--brand-color) 50%, 
+    var(--border-color) 100%);
+  border-radius: 4px;
+  height: 4px;
+  margin-top: 40px;
+}
+
+.century-marker {
+  position: absolute;
+  top: -8px;
+  transform: translateX(-50%);
+}
+
+.century-marker::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 16px;
+  background: var(--border-color);
+  top: 0;
+}
+
+.century-label {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.event-marker {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.event-line {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 3px;
+  height: 30px;
+  top: -30px;
+  background: linear-gradient(to bottom, var(--accent-color), var(--brand-color));
+  border-radius: 2px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.event-line::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  border: 2px solid var(--bg-secondary);
+  box-shadow: 0 0 0 2px var(--accent-color);
+}
+
+.event-label {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  white-space: nowrap;
+  background: var(--bg-primary);
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--accent-color);
+}
+
+.timeline {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.timeline-item {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.timeline-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand-color), var(--accent-color));
+  border: 3px solid var(--bg-primary);
+  box-shadow: 0 0 0 2px var(--brand-color);
+  z-index: 2;
+  flex-shrink: 0;
+}
+
+.timeline-line {
+  width: 2px;
+  flex-grow: 1;
+  background: linear-gradient(180deg, var(--brand-color), var(--border-color));
+  margin-top: 0.25rem;
+}
+
+.timeline-content {
+  flex-grow: 1;
+  padding: 0.5rem 1rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 3px solid var(--brand-color);
+  transition: all 0.3s ease;
+}
+
+.timeline-content:hover {
+  background: var(--bg-tertiary);
+  border-left-color: var(--accent-color);
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.timeline-year {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--brand-color);
+  margin-bottom: 0.25rem;
+  font-family: 'Courier New', monospace;
+}
+
+.timeline-event {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.timeline-details {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* Dark theme timeline adjustments */
+[data-theme="dark"] .timeline-content:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 /* ===== Spectral Display ===== */

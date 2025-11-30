@@ -263,6 +263,7 @@ class ElementsClient {
   updateSelectedElementsDisplay() {
     const listElement = document.getElementById('selectedElementsList');
     const buildBtn = document.getElementById('buildCompoundBtn');
+    const compareBtn = document.getElementById('compareElementsBtn');
     const clearBtn = document.getElementById('clearSelectionBtn');
     
     if (!listElement) return;
@@ -270,6 +271,7 @@ class ElementsClient {
     if (this.selectedElements.size === 0) {
       listElement.innerHTML = '<span class="text-muted">Click on elements below to select them</span>';
       if (buildBtn) buildBtn.disabled = true;
+      if (compareBtn) compareBtn.disabled = true;
       if (clearBtn) clearBtn.disabled = true;
     } else {
       const selectedElementsArray = Array.from(this.selectedElements)
@@ -302,6 +304,7 @@ class ElementsClient {
       
       listElement.innerHTML = html;
       if (buildBtn) buildBtn.disabled = this.selectedElements.size < 2;
+      if (compareBtn) compareBtn.disabled = false;
       if (clearBtn) clearBtn.disabled = false;
     }
   }
@@ -519,6 +522,28 @@ class ElementsClient {
         </div>
         ` : ''}
 
+        ${el.history && el.history.length > 0 ? `
+        <div class="detail-section">
+          <h5>Historical Timeline</h5>
+          ${this.generateHorizontalTimeline(el.history)}
+          <div class="timeline">
+            ${el.history.map((event, index) => `
+              <div class="timeline-item">
+                <div class="timeline-marker">
+                  <div class="timeline-dot"></div>
+                  ${index < el.history.length - 1 ? '<div class="timeline-line"></div>' : ''}
+                </div>
+                <div class="timeline-content">
+                  <div class="timeline-year">${event.year}</div>
+                  <div class="timeline-event">${event.event}</div>
+                  <div class="timeline-details">${event.details}</div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        ` : ''}
+
         ${el.spectralLines && el.spectralLines.length > 0 ? `
         <div class="detail-section">
           <h5>Description</h5>
@@ -605,12 +630,57 @@ class ElementsClient {
       });
     }
 
+    const compareElementsBtn = document.getElementById('compareElementsBtn');
+    if (compareElementsBtn) {
+      compareElementsBtn.addEventListener('click', () => {
+        this.compareElements();
+      });
+    }
+
     const clearSelectionBtn = document.getElementById('clearSelectionBtn');
     if (clearSelectionBtn) {
       clearSelectionBtn.addEventListener('click', () => {
         this.clearElementSelection();
       });
     }
+  }
+
+  generateHorizontalTimeline(history) {
+    const currentYear = new Date().getFullYear();
+    const startYear = 0;
+    const endYear = currentYear;
+    const totalYears = endYear - startYear;
+
+    // Generate century markers (every 500 years)
+    const centuryMarkers = [];
+    for (let year = 0; year <= currentYear; year += 500) {
+      const position = ((year - startYear) / totalYears) * 100;
+      centuryMarkers.push({ year, position });
+    }
+
+    // Position each event
+    const eventMarkers = history.map(event => {
+      const position = ((event.year - startYear) / totalYears) * 100;
+      return { year: event.year, position };
+    });
+
+    return `
+      <div class="horizontal-timeline">
+        <div class="horizontal-timeline-track">
+          ${centuryMarkers.map(marker => `
+            <div class="century-marker" style="left: ${marker.position}%">
+              <div class="century-label">${marker.year}</div>
+            </div>
+          `).join('')}
+          ${eventMarkers.map(event => `
+            <div class="event-marker" style="left: ${event.position}%" title="${event.year}">
+              <div class="event-line"></div>
+              <div class="event-label">${event.year}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
   }
 
   performSearch(query) {
@@ -706,6 +776,20 @@ class ElementsClient {
   }
 
   // ===== Compound Builder Methods =====
+
+  compareElements() {
+    if (this.selectedElements.size === 0) {
+      alert('Please select at least 1 element to compare.');
+      return;
+    }
+
+    const selectedElementsData = Array.from(this.selectedElements)
+      .sort((a, b) => a - b)
+      .map(atomicNum => this.elements.find(e => e.atomicNumber === atomicNum))
+      .filter(el => el);
+
+    this.showComparisonModal(selectedElementsData);
+  }
 
   buildCompound() {
     if (this.selectedElements.size < 2) {
@@ -1390,6 +1474,142 @@ class ElementsClient {
   formatChemicalFormula(formula) {
     // Convert numbers to subscripts
     return formula.replace(/(\d+)/g, '<sub>$1</sub>');
+  }
+
+  showComparisonModal(elements) {
+    const modal = document.getElementById('comparisonModal');
+    if (!modal) return;
+
+    const modalBody = document.getElementById('comparisonModalBody');
+    if (!modalBody) return;
+
+    // Build comparison table
+    let html = '<div class="comparison-table"><table class="table table-bordered">';
+    
+    // Header row with element symbols and names
+    html += '<thead><tr><th class="property-label">Property</th>';
+    elements.forEach(el => {
+      const color = Utils.getCategoryColor(el.category);
+      html += `
+        <th class="element-header" style="border-left: 4px solid ${color};">
+          <span class="element-symbol-header" style="color: ${color};">${el.symbol}</span>
+          <span class="element-name-header">${el.name}</span>
+        </th>
+      `;
+    });
+    html += '</tr></thead><tbody>';
+
+    // Helper function to add a row
+    const addRow = (label, valueFn) => {
+      html += `<tr><td class="property-label">${label}</td>`;
+      elements.forEach(el => {
+        html += `<td class="property-value">${valueFn(el)}</td>`;
+      });
+      html += '</tr>';
+    };
+
+    // Basic Information
+    addRow('Atomic Number', el => el.atomicNumber);
+    addRow('Atomic Weight', el => el.atomicWeight ? `${el.atomicWeight.value} ${el.atomicWeight.units}` : 'N/A');
+    addRow('Category', el => Utils.getCategoryLabel(el.category));
+    addRow('Group', el => el.group || 'N/A');
+    addRow('Period', el => el.period || 'N/A');
+    addRow('Block', el => Utils.getBlockName(el.block));
+    addRow('Standard State', el => el.standardState || 'N/A');
+    
+    // Electronic Structure
+    addRow('Electron Configuration', el => `<small>${el.electronConfiguration || 'N/A'}</small>`);
+    addRow('Oxidation States', el => Utils.formatOxidationStates(el.oxidationStates));
+    addRow('Electronegativity', el => {
+      const en = Utils.getElectronegativity(el.atomicNumber);
+      return en !== null ? en.toFixed(2) : 'N/A';
+    });
+
+    // Atomic Radius
+    addRow('Covalent Radius', el => {
+      if (el.atomicRadius?.covalent) {
+        return `${el.atomicRadius.covalent.value} ${el.atomicRadius.covalent.units}`;
+      }
+      return 'N/A';
+    });
+    addRow('Van der Waals Radius', el => {
+      if (el.atomicRadius?.vanDerWaals) {
+        return `${el.atomicRadius.vanDerWaals.value} ${el.atomicRadius.vanDerWaals.units}`;
+      }
+      return 'N/A';
+    });
+
+    // Physical Properties
+    addRow('Melting Point', el => {
+      if (el.meltingPoint) {
+        return `<small>${el.meltingPoint.value} K</small>`;
+      }
+      return 'N/A';
+    });
+    addRow('Boiling Point', el => {
+      if (el.boilingPoint) {
+        return `<small>${el.boilingPoint.value} K</small>`;
+      }
+      return 'N/A';
+    });
+    addRow('Density (Solid)', el => {
+      if (el.density?.solid) {
+        const val = el.density.solid.value || (el.density.solid.valueRange ? el.density.solid.valueRange.join('-') : 'N/A');
+        return `<small>${val} ${el.density.solid.units}</small>`;
+      }
+      return 'N/A';
+    });
+    addRow('Crystal Structure', el => el.crystalStructure ? `<small>${el.crystalStructure}</small>` : 'N/A');
+
+    // Thermal Properties
+    addRow('Thermal Conductivity', el => {
+      if (el.thermalConductivity?.solid) {
+        const val = el.thermalConductivity.solid.value || (el.thermalConductivity.solid.valueRange ? el.thermalConductivity.solid.valueRange.join('-') : 'N/A');
+        return `<small>${val} ${el.thermalConductivity.solid.units}</small>`;
+      }
+      return 'N/A';
+    });
+    addRow('Specific Heat', el => {
+      if (el.specificHeat?.solid) {
+        const val = el.specificHeat.solid.value || (el.specificHeat.solid.valueRange ? el.specificHeat.solid.valueRange.join('-') : 'N/A');
+        return `<small>${val} ${el.specificHeat.solid.units}</small>`;
+      }
+      return 'N/A';
+    });
+
+    // Isotopes
+    addRow('Stable Isotopes', el => {
+      if (el.isotopes && el.isotopes.length > 0) {
+        const stable = el.isotopes.filter(iso => iso.stable);
+        return stable.length > 0 ? stable.length : 'None';
+      }
+      return 'N/A';
+    });
+    addRow('Most Abundant Isotope', el => {
+      if (el.isotopes && el.isotopes.length > 0) {
+        const mostAbundant = el.isotopes.reduce((max, iso) => 
+          (iso.naturalAbundance_percent || 0) > (max.naturalAbundance_percent || 0) ? iso : max
+        );
+        return `<small>${mostAbundant.symbol}</small>`;
+      }
+      return 'N/A';
+    });
+
+    // Economic
+    addRow('Cost', el => {
+      if (el.cost?.value !== null && el.cost?.value !== undefined) {
+        return `<small>${el.cost.value} per ${el.cost.units || 'unit'}</small>`;
+      }
+      return 'N/A';
+    });
+
+    html += '</tbody></table></div>';
+
+    modalBody.innerHTML = html;
+
+    // Show modal
+    const bsModal = new bootstrap.Modal(modal);
+    bsModal.show();
   }
 }
 
