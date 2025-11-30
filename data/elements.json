@@ -1,0 +1,326 @@
+[
+    {
+  "name": "Hydrogen",
+  "symbol": "H",
+  "atomicNumber": 1,
+  "atomicWeight": {
+    "value": 1.008,
+    "units": "u",
+    "note": "IUPAC abridged standard atomic weight"
+  },
+  "atomicRadius": {
+    "covalent": {
+      "value": 31,
+      "units": "pm"
+    },
+    "vanDerWaals": {
+      "value": 120,
+      "units": "pm"
+    }
+  },
+  "electronConfiguration": "1s1",
+  "oxidationStates": [-1, 0, 1],
+  "crystalStructure": "Hexagonal close-packed molecular solid at low temperature and pressure",
+  "meltingPoint": {
+    "value": 13.99,
+    "units": "K",
+    "conditions": "at 1 atm"
+  },
+  "boilingPoint": {
+    "value": 20.271,
+    "units": "K",
+    "conditions": "at 1 atm"
+  },
+  "triplePoint": {
+    "temperature": {
+      "value": 13.8033,
+      "units": "K"
+    },
+    "pressure": {
+      "value": 7.04,
+      "units": "kPa"
+    }
+  },
+  "density": {
+    "solid": {
+      "value": 80,
+      "units": "kg/m^3",
+      "conditions": "solid near melting point (~14 K, ~1 atm; approximate)"
+    },
+    "liquid": {
+      "value": 71,
+      "units": "kg/m^3",
+      "conditions": "liquid near boiling point (~20 K, 1 atm)"
+    },
+    "gas": {
+      "value": 0.0838,
+      "units": "kg/m^3",
+      "conditions": "gas at NTP (20 °C, 1 atm)"
+    }
+  },
+  "specificHeat": {
+    "solid": {
+      "value": 2.1,
+      "units": "kJ/(kg·K)",
+      "conditions": "solid hydrogen near 14 K; strongly temperature- and phase-composition-dependent; approximate"
+    },
+    "liquid": {
+      "value": 9.7,
+      "units": "kJ/(kg·K)",
+      "conditions": "liquid hydrogen near 20 K, ~1 atm (parahydrogen-dominated)"
+    },
+    "gas": {
+      "value": 14.3,
+      "units": "kJ/(kg·K)",
+      "conditions": "gaseous hydrogen at ~300 K, 1 atm, Cp at constant pressure"
+    }
+  },
+  "thermalConductivity": {
+    "solid": {
+      "valueRange": [0.1, 1.0],
+      "units": "W/(m·K)",
+      "conditions": "order-of-magnitude range for solid hydrogen between ~2–14 K; strongly dependent on temperature, ortho/para ratio, and crystal quality"
+    },
+    "liquid": {
+      "value": 0.076,
+      "units": "W/(m·K)",
+      "conditions": "liquid hydrogen at ~14–20 K on the liquid–vapor equilibrium line"
+    },
+    "gas": {
+      "value": 0.182,
+      "units": "W/(m·K)",
+      "conditions": "gaseous hydrogen at 300 K, 1 atm"
+    }
+  },
+  "spectralLines": [
+    {
+      "series": "Lyman",
+      "transition": "n=2→1 (Lyman-α)",
+      "wavelength_nm": 121.567
+    },
+    {
+      "series": "Lyman",
+      "transition": "n=3→1 (Lyman-β)",
+      "wavelength_nm": 102.572
+    },
+    {
+      "series": "Balmer",
+      "transition": "n=3→2 (H-α)",
+      "wavelength_nm": 656.28
+    },
+    {
+      "series": "Balmer",
+      "transition": "n=4→2 (H-β)",
+      "wavelength_nm": 486.13
+    },
+    {
+      "series": "Balmer",
+      "transition": "n=5→2 (H-γ)",
+      "wavelength_nm": 434.05
+    },
+    {
+      "series": "Paschen",
+      "transition": "n=4→3 (Paschen-α)",
+      "wavelength_nm": 1875.1
+    }
+  ],
+  "isotopes": [
+    {
+      "symbol": "1H",
+      "name": "protium",
+      "massNumber": 1,
+      "stable": true,
+      "naturalAbundance_percent": 99.985,
+      "halfLife": null,
+      "decayModes": []
+    },
+    {
+      "symbol": "2H",
+      "name": "deuterium",
+      "massNumber": 2,
+      "stable": true,
+      "naturalAbundance_percent": 0.015,
+      "halfLife": null,
+      "decayModes": []
+    },
+    {
+      "symbol": "3H",
+      "name": "tritium",
+      "massNumber": 3,
+      "stable": false,
+      "naturalAbundance_percent": 0.0,
+      "halfLife": {
+        "value": 12.32,
+        "units": "years"
+      },
+      "decayModes": ["β−"]
+    }
+  ],
+  "cost": {
+    "units": "USD/kg",
+    "value": null,
+    "note": "Costs vary widely by production route and region; typical contemporary ranges: grey ~1–3 USD/kg, blue ~2–7 USD/kg, green ~3–15+ USD/kg, retail fuel often ~10–16 USD/kg."
+  },
+  "description": "Hydrogen is the lightest and most abundant element in the universe, accounting for the majority of ordinary (baryonic) matter and serving as the primary fuel for stellar fusion. On Earth it exists mainly as the diatomic gas H2, a colorless, odorless, highly flammable molecule with very low density and high thermal conductivity. Chemically, hydrogen forms covalent bonds with nonmetals and polar covalent or ionic hydrides with electropositive metals, appearing most commonly in the +1 oxidation state but also as −1 in metal hydrides. Its isotopes protium, deuterium, and radioactive tritium underpin applications ranging from heavy water reactors to fusion research and radiotracing. Industrial hydrogen is produced at scale for ammonia synthesis, petroleum refining, methanol production, and emerging energy-carrier roles such as fuel cells and synthetic fuels. Under extreme pressures, hydrogen exhibits complex phase behavior, including predicted metallic and superconducting states, making it central to planetary physics and high-pressure research as well as practical cryogenic engineering.",
+  "group": 1,
+  "period": 1,
+  "block": "s",
+  "category": "diatomic nonmetal"
+},
+{
+  "name": "Helium",
+  "symbol": "He",
+  "atomicNumber": 2,
+  "atomicWeight": {
+    "value": 4.002602,
+    "units": "u",
+    "note": "IUPAC standard atomic weight"
+  },
+  "atomicRadius": {
+    "vanDerWaals": {
+      "value": 118,
+      "units": "pm"
+    }
+  },
+  "electronConfiguration": "1s2",
+  "oxidationStates": [0],
+  "crystalStructure": "Hexagonal close-packed solid under high pressure",
+  "meltingPoint": {
+    "value": 0.95,
+    "units": "K",
+    "conditions": "approx. 0.95 K at ~25–26 atm; helium does not solidify at 1 atm"
+  },
+  "boilingPoint": {
+    "value": 4.222,
+    "units": "K",
+    "conditions": "at 1 atm"
+  },
+  "triplePoint": {
+    "temperature": {
+      "value": 2.177,
+      "units": "K"
+    },
+    "pressure": {
+      "value": 5.043,
+      "units": "kPa"
+    }
+  },
+  "density": {
+    "solid": {
+      "value": 206,
+      "units": "kg/m^3",
+      "conditions": "solid helium-4 near 1.1 K and ~66 atm; approximate from 0.194–0.218 g/cm³ range"
+    },
+    "liquid": {
+      "value": 125,
+      "units": "kg/m^3",
+      "conditions": "liquid helium-4 at boiling point (4.2 K) and 1 atm"
+    },
+    "gas": {
+      "value": 0.1786,
+      "units": "kg/m^3",
+      "conditions": "helium gas at STP (0 °C, 1 atm)"
+    }
+  },
+  "specificHeat": {
+    "solid": null,
+    "liquid": null,
+    "gas": {
+      "value": 5.19,
+      "units": "kJ/(kg·K)",
+      "conditions": "gaseous helium at ~25 °C, 1 atm, Cp at constant pressure"
+    }
+  },
+  "thermalConductivity": {
+    "solid": null,
+    "liquid": {
+      "value": 0.0314,
+      "units": "W/(m·K)",
+      "conditions": "liquid helium at boiling point (4.2 K), 1 atm; normal fluid (He I)"
+    },
+    "gas": {
+      "value": 0.1513,
+      "units": "W/(m·K)",
+      "conditions": "helium gas at ~300 K, ~1 atm"
+    }
+  },
+  "spectralLines": [
+    {
+      "series": "He I",
+      "transition": "2^3P → 3^3D (yellow line)",
+      "wavelength_nm": 587.58
+    },
+    {
+      "series": "He I",
+      "transition": "2^3P → 4^3D (blue-violet line)",
+      "wavelength_nm": 447.15
+    },
+    {
+      "series": "He I",
+      "transition": "2^1P → 3^1D (blue-green line)",
+      "wavelength_nm": 501.57
+    },
+    {
+      "series": "He I",
+      "transition": "2^3P → 5^3D (violet line)",
+      "wavelength_nm": 402.62
+    }
+  ],
+  "isotopes": [
+    {
+      "symbol": "3He",
+      "name": "helium-3",
+      "massNumber": 3,
+      "stable": true,
+      "naturalAbundance_percent": 0.0001,
+      "halfLife": null,
+      "decayModes": []
+    },
+    {
+      "symbol": "4He",
+      "name": "helium-4",
+      "massNumber": 4,
+      "stable": true,
+      "naturalAbundance_percent": 99.9999,
+      "halfLife": null,
+      "decayModes": []
+    },
+    {
+      "symbol": "5He",
+      "name": "helium-5",
+      "massNumber": 5,
+      "stable": false,
+      "naturalAbundance_percent": 0.0,
+      "halfLife": {
+        "value": 0.0008069,
+        "units": "s"
+      },
+      "decayModes": ["β−", "n emission"]
+    },
+    {
+      "symbol": "6He",
+      "name": "helium-6",
+      "massNumber": 6,
+      "stable": false,
+      "naturalAbundance_percent": 0.0,
+      "halfLife": {
+        "value": 0.1195,
+        "units": "s"
+      },
+      "decayModes": ["β−"]
+    }
+  ],
+  "cost": {
+    "units": "USD/m^3",
+    "value": null,
+    "note": "Market price varies widely by purity, form (bulk liquid vs. compressed gas), and region; helium is significantly more expensive than typical industrial gases and has experienced periodic supply shortages."
+  },
+  "description": "Helium is the second-lightest element and the first noble gas, occurring as a colorless, odorless, monatomic gas that is extraordinarily inert chemically. Its 1s2 electron configuration gives it a closed shell, so helium forms no stable ordinary compounds under ambient conditions, and its only common oxidation state is 0. Physically, helium is notable for having the lowest boiling point of any element, liquefying at about 4.2 K, and it does not solidify at 1 atm regardless of temperature. Under modest pressures, helium-4 forms quantum liquids that exhibit superfluidity below the lambda point, with extremely high thermal conductivity and zero-viscosity flow. Industrially, helium is produced mainly from natural gas fields where it accumulates as a by-product of alpha decay in the crust. It is used as a cryogenic refrigerant for superconducting magnets in MRI scanners and particle accelerators, as a protective inert atmosphere in welding and semiconductor processing, as a lifting gas, and in specialized breathing mixtures for deep diving. Its stable isotopes, helium-3 and helium-4, play key roles in low-temperature physics and neutron detection, while short-lived radioisotopes provide insights into nuclear structure and geochemical processes.",
+  "group": 18,
+  "period": 1,
+  "block": "s",
+  "category": "noble gas"
+}
+
+
+]
