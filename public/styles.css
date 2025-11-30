@@ -362,6 +362,46 @@ body {
   color: var(--text-primary);
 }
 
+.element-count-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: var(--bg-primary);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.element-count-input .element-symbol-badge {
+  font-weight: bold;
+  color: var(--brand-color);
+  min-width: 30px;
+  font-size: 1.1rem;
+}
+
+.element-count-input input {
+  width: 70px;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--element-bg);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.element-count-input input:focus {
+  outline: none;
+  border-color: var(--brand-color);
+  box-shadow: 0 0 0 2px rgba(13, 110, 253, 0.25);
+}
+
+.element-count-input label {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
 .compound-likelihood {
   padding: 1rem;
   border-radius: 8px;

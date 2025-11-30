@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "Periodic Table",
-  "type": "object",
+  "type": "array",
   "properties": {
     "elements": {
       "type": "array",

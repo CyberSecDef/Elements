@@ -252,7 +252,7 @@ class ElementsClient {
       this.selectedElements.delete(element.atomicNumber);
       card.classList.remove('selected');
     } else {
-      // Select
+      // Select with default count of 1
       this.selectedElements.add(element.atomicNumber);
       card.classList.add('selected');
     }
@@ -268,8 +268,7 @@ class ElementsClient {
     if (!listElement) return;
     
     if (this.selectedElements.size === 0) {
-      listElement.textContent = 'Click on elements below to select them';
-      listElement.className = 'text-muted ms-2';
+      listElement.innerHTML = '<span class="text-muted">Click on elements below to select them</span>';
       if (buildBtn) buildBtn.disabled = true;
       if (clearBtn) clearBtn.disabled = true;
     } else {
@@ -277,11 +276,31 @@ class ElementsClient {
         .sort((a, b) => a - b)
         .map(atomicNum => {
           const el = this.elements.find(e => e.atomicNumber === atomicNum);
-          return el ? el.symbol : atomicNum;
-        });
+          return el;
+        })
+        .filter(el => el);
       
-      listElement.textContent = selectedElementsArray.join(', ');
-      listElement.className = 'text-primary fw-bold ms-2';
+      // Create input boxes for each element
+      let html = '';
+      selectedElementsArray.forEach(el => {
+        html += `
+          <div class="element-count-input">
+            <span class="element-symbol-badge">${el.symbol}</span>
+            <input 
+              type="number" 
+              min="1" 
+              max="99" 
+              value="1" 
+              id="count-${el.atomicNumber}"
+              data-atomic-number="${el.atomicNumber}"
+              class="element-count-field"
+            />
+            <label for="count-${el.atomicNumber}">${el.name}</label>
+          </div>
+        `;
+      });
+      
+      listElement.innerHTML = html;
       if (buildBtn) buildBtn.disabled = this.selectedElements.size < 2;
       if (clearBtn) clearBtn.disabled = false;
     }
@@ -694,17 +713,36 @@ class ElementsClient {
       return;
     }
 
+    // Get element counts from input fields
+    const elementCounts = [];
     const selectedElementsData = Array.from(this.selectedElements)
-      .map(atomicNum => this.elements.find(e => e.atomicNumber === atomicNum))
-      .filter(el => el); // Filter out any undefined
+      .map(atomicNum => {
+        const el = this.elements.find(e => e.atomicNumber === atomicNum);
+        const countInput = document.getElementById(`count-${atomicNum}`);
+        const count = countInput ? parseInt(countInput.value) || 1 : 1;
+        
+        if (el) {
+          elementCounts.push({ element: el, count: count });
+        }
+        return el;
+      })
+      .filter(el => el);
 
-    const analysis = this.analyzeCompound(selectedElementsData);
+    const analysis = this.analyzeCompound(selectedElementsData, elementCounts);
     this.showCompoundModal(analysis);
   }
 
-  analyzeCompound(elements) {
+  analyzeCompound(elements, userSpecifiedCounts = null) {
     // Sort elements by atomic number for consistency
     elements.sort((a, b) => a.atomicNumber - b.atomicNumber);
+    
+    // If user specified counts, test that specific formula first
+    if (userSpecifiedCounts && userSpecifiedCounts.length > 0) {
+      const userFormulaAnalysis = this.analyzeUserFormula(userSpecifiedCounts, elements);
+      if (userFormulaAnalysis) {
+        return userFormulaAnalysis;
+      }
+    }
 
     // Check for noble gases
     const nobleGases = elements.filter(el => el.category === 'noble gas');
@@ -857,14 +895,178 @@ class ElementsClient {
   }
 
   analyzeMultiElementCompound(elements, bondType, maxENDiff) {
-    // For compounds with 3+ elements, provide general analysis
-    const symbols = elements.map(el => el.symbol).join('');
+    // For compounds with 3+ elements, try to find balanced formulas
+    const formulas = [];
+    
+    // Get oxidation states for all elements
+    const elementOxStates = elements.map(el => ({
+      element: el,
+      oxStates: (el.oxidationStates || [0]).filter(ox => ox !== 0)
+    }));
+    
+    // Check if all elements have non-zero oxidation states
+    const missingOxStates = elementOxStates.filter(item => item.oxStates.length === 0);
+    if (missingOxStates.length > 0) {
+      return {
+        likelihood: 'unlikely',
+        formulas: [],
+        bondType: bondType,
+        reason: `${missingOxStates.map(item => item.element.name).join(', ')} lack${missingOxStates.length === 1 ? 's' : ''} non-zero oxidation states needed for compound formation.`,
+        elements: elements,
+        enDiff: maxENDiff
+      };
+    }
+    
+    // Try different combinations of atoms (1-12 of each)
+    const maxAtoms = 12;
+    const maxFormulas = 50; // Limit number of formulas to test
+    let testedCount = 0;
+    
+    // For each element, pick the most common oxidation state (smallest absolute value that's non-zero)
+    const preferredOxStates = elementOxStates.map(item => {
+      // Sort by absolute value, prefer positive over negative if tied
+      const sorted = [...item.oxStates].sort((a, b) => {
+        const absA = Math.abs(a);
+        const absB = Math.abs(b);
+        if (absA !== absB) return absA - absB;
+        return b - a; // Prefer positive
+      });
+      return {
+        element: item.element,
+        preferredOx: sorted[0],
+        allOxStates: item.oxStates
+      };
+    });
+    
+    // Generate combinations - try to balance charges
+    // Use a recursive approach to find charge-balanced combinations
+    const findBalancedFormulas = (elementIndex, currentCounts, currentCharge) => {
+      if (testedCount >= maxFormulas) return;
+      
+      if (elementIndex === elements.length) {
+        // Check if we have a balanced formula (total charge = 0)
+        if (currentCharge === 0 && currentCounts.some(c => c > 0)) {
+          const formulaParts = [];
+          let oxStateInfo = [];
+          
+          for (let i = 0; i < elements.length; i++) {
+            if (currentCounts[i] > 0) {
+              const count = currentCounts[i];
+              formulaParts.push(
+                elements[i].symbol + (count > 1 ? count : '')
+              );
+              oxStateInfo.push(
+                `${elements[i].symbol}: ${preferredOxStates[i].preferredOx > 0 ? '+' : ''}${preferredOxStates[i].preferredOx} (×${count})`
+              );
+            }
+          }
+          
+          if (formulaParts.length >= 2) { // Need at least 2 different elements
+            formulas.push({
+              formula: formulaParts.join(''),
+              oxidationStates: oxStateInfo.join(', ')
+            });
+            testedCount++;
+          }
+        }
+        return;
+      }
+      
+      // Try different counts for current element (0 to maxAtoms)
+      const element = preferredOxStates[elementIndex];
+      const oxState = element.preferredOx;
+      
+      for (let count = 0; count <= maxAtoms && testedCount < maxFormulas; count++) {
+        const newCounts = [...currentCounts];
+        newCounts[elementIndex] = count;
+        const newCharge = currentCharge + (oxState * count);
+        
+        // Prune: if we've assigned all elements and charge is too far from zero, skip
+        if (elementIndex === elements.length - 1) {
+          if (newCharge === 0) {
+            findBalancedFormulas(elementIndex + 1, newCounts, newCharge);
+          }
+        } else {
+          // Continue if charge could potentially be balanced
+          const remainingElements = elements.length - elementIndex - 1;
+          const maxPossibleCorrection = remainingElements * maxAtoms * Math.max(
+            ...preferredOxStates.slice(elementIndex + 1).map(e => Math.abs(e.preferredOx))
+          );
+          
+          if (Math.abs(newCharge) <= maxPossibleCorrection) {
+            findBalancedFormulas(elementIndex + 1, newCounts, newCharge);
+          }
+        }
+      }
+    };
+    
+    // Start the recursive search
+    findBalancedFormulas(0, new Array(elements.length).fill(0), 0);
+    
+    // If no formulas found with preferred oxidation states, try alternative oxidation states
+    if (formulas.length === 0) {
+      // Try simple binary-like combinations with different oxidation state pairs
+      for (let i = 0; i < elements.length - 1 && formulas.length < 10; i++) {
+        for (let j = i + 1; j < elements.length && formulas.length < 10; j++) {
+          const el1 = elements[i];
+          const el2 = elements[j];
+          
+          for (const ox1 of elementOxStates[i].oxStates) {
+            for (const ox2 of elementOxStates[j].oxStates) {
+              if ((ox1 > 0 && ox2 < 0) || (ox1 < 0 && ox2 > 0)) {
+                const abs1 = Math.abs(ox1);
+                const abs2 = Math.abs(ox2);
+                const gcd = this.gcd(abs1, abs2);
+                const count1 = abs2 / gcd;
+                const count2 = abs1 / gcd;
+                
+                // Create a formula with these two elements
+                const counts = new Array(elements.length).fill(0);
+                counts[i] = count1;
+                counts[j] = count2;
+                
+                const formulaParts = [];
+                const oxStateInfo = [];
+                for (let k = 0; k < elements.length; k++) {
+                  if (counts[k] > 0) {
+                    formulaParts.push(elements[k].symbol + (counts[k] > 1 ? counts[k] : ''));
+                    oxStateInfo.push(`${elements[k].symbol}: ${counts[k] > 0 ? '+' : ''}${k === i ? ox1 : ox2} (×${counts[k]})`);
+                  }
+                }
+                
+                formulas.push({
+                  formula: formulaParts.join(''),
+                  oxidationStates: oxStateInfo.join(', ')
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+    
+    // Assess likelihood based on formulas found and electronegativity
+    let likelihood, reason;
+    
+    if (formulas.length === 0) {
+      likelihood = 'unlikely';
+      reason = `Unable to find charge-balanced combinations with available oxidation states for ${elements.length} elements.`;
+    } else if (formulas.length > 20) {
+      likelihood = 'possible but unstable';
+      reason = `Found ${formulas.length} possible charge-balanced formulas with max electronegativity difference of ${maxENDiff.toFixed(2)}. Multi-element compounds are often complex and may require specific conditions for stability.`;
+    } else if (maxENDiff > 1.5 && formulas.length >= 1) {
+      likelihood = 'possible but unstable';
+      reason = `Found ${formulas.length} possible formula${formulas.length > 1 ? 's' : ''} with mixed ionic/covalent character (ΔEN = ${maxENDiff.toFixed(2)}). Complex multi-element compounds may form under specific conditions.`;
+    } else {
+      likelihood = 'possible but unstable';
+      reason = `Found ${formulas.length} charge-balanced formula${formulas.length > 1 ? 's' : ''} with primarily covalent character (ΔEN = ${maxENDiff.toFixed(2)}). Multi-element organic/molecular compounds may be stable but require specific structural knowledge.`;
+    }
     
     return {
-      likelihood: 'possible but unstable',
-      formulas: [{ formula: symbols, oxidationStates: 'Multiple oxidation states possible' }],
-      bondType: 'mixed',
-      reason: `Complex multi-element compound. Bond type varies with max electronegativity difference of ${maxENDiff.toFixed(2)}. Detailed stoichiometric analysis requires specific chemical knowledge.`,
+      likelihood: likelihood,
+      formulas: formulas.slice(0, 20), // Limit display to top 20
+      bondType: bondType,
+      reason: reason,
       elements: elements,
       enDiff: maxENDiff
     };
@@ -897,6 +1099,202 @@ class ElementsClient {
 
   gcd(a, b) {
     return b === 0 ? a : this.gcd(b, a % b);
+  }
+
+  analyzeUserFormula(elementCounts, elements) {
+    // Sort by atomic number for consistency
+    elementCounts.sort((a, b) => a.element.atomicNumber - b.element.atomicNumber);
+    
+    // Build formula string
+    const formulaParts = elementCounts.map(ec => 
+      ec.element.symbol + (ec.count > 1 ? ec.count : '')
+    );
+    const userFormula = formulaParts.join('');
+    
+    // Check for noble gases
+    const nobleGases = elementCounts.filter(ec => ec.element.category === 'noble gas');
+    if (nobleGases.length > 0) {
+      return {
+        likelihood: 'unlikely',
+        formulas: [{ formula: userFormula, oxidationStates: 'User-specified formula' }],
+        bondType: 'none',
+        reason: `${nobleGases.map(ec => ec.element.name).join(', ')} ${nobleGases.length > 1 ? 'are' : 'is a'} noble gas${nobleGases.length > 1 ? 'es' : ''} with a complete valence shell and will not readily form compounds.`,
+        elements: elements,
+        userSpecified: true
+      };
+    }
+    
+    // Get electronegativity values
+    const electronegativities = elementCounts.map(ec => ({
+      element: ec.element,
+      count: ec.count,
+      en: Utils.getElectronegativity(ec.element.atomicNumber)
+    }));
+    
+    const missingEN = electronegativities.filter(item => item.en === null);
+    if (missingEN.length > 0) {
+      return {
+        likelihood: 'possible but unstable',
+        formulas: [{ formula: userFormula, oxidationStates: 'User-specified formula' }],
+        bondType: 'unknown',
+        reason: `Insufficient electronegativity data available for complete analysis of your formula ${userFormula}.`,
+        elements: elements,
+        userSpecified: true
+      };
+    }
+    
+    // Calculate max electronegativity difference
+    const enDiffs = [];
+    for (let i = 0; i < electronegativities.length - 1; i++) {
+      for (let j = i + 1; j < electronegativities.length; j++) {
+        enDiffs.push({
+          pair: [electronegativities[i].element, electronegativities[j].element],
+          diff: Math.abs(electronegativities[i].en - electronegativities[j].en)
+        });
+      }
+    }
+    const maxENDiff = Math.max(...enDiffs.map(d => d.diff));
+    
+    // Determine bond type
+    let bondType;
+    if (maxENDiff > 1.7) {
+      bondType = 'ionic';
+    } else if (maxENDiff > 0.4) {
+      bondType = 'polar covalent';
+    } else {
+      bondType = 'nonpolar covalent';
+    }
+    
+    // Try to validate charge balance
+    const chargeAnalysis = this.validateChargeBalance(elementCounts);
+    
+    let likelihood, reason;
+    
+    if (chargeAnalysis.balanced) {
+      // Check if it's a known stable compound pattern
+      const isCommonPattern = this.checkCommonPattern(elementCounts);
+      
+      if (isCommonPattern) {
+        likelihood = 'likely';
+        reason = `Your formula ${userFormula} is charge-balanced and matches known stable compound patterns. ${isCommonPattern}`;
+      } else if (bondType === 'ionic' && maxENDiff > 1.7) {
+        likelihood = 'likely';
+        reason = `Your formula ${userFormula} is charge-balanced with strong ionic character (ΔEN = ${maxENDiff.toFixed(2)}). This suggests a stable ionic compound.`;
+      } else if (maxENDiff > 0.4) {
+        likelihood = 'likely';
+        reason = `Your formula ${userFormula} is charge-balanced with ${bondType} bonding (ΔEN = ${maxENDiff.toFixed(2)}). This could form a stable compound.`;
+      } else {
+        likelihood = 'possible but unstable';
+        reason = `Your formula ${userFormula} is charge-balanced but has weak electronegativity differences (ΔEN = ${maxENDiff.toFixed(2)}). May require specific molecular structure.`;
+      }
+    } else {
+      likelihood = 'possible but unstable';
+      reason = `Your formula ${userFormula} does not achieve perfect charge balance with common oxidation states. ${chargeAnalysis.reason} The compound may still exist but could be unstable or require unusual bonding.`;
+    }
+    
+    return {
+      likelihood: likelihood,
+      formulas: [{
+        formula: userFormula,
+        oxidationStates: chargeAnalysis.oxidationStates || 'User-specified formula'
+      }],
+      bondType: bondType,
+      reason: reason,
+      elements: elements,
+      enDiff: maxENDiff,
+      userSpecified: true
+    };
+  }
+
+  validateChargeBalance(elementCounts) {
+    // Try to find oxidation states that balance
+    const elementOxStates = elementCounts.map(ec => ({
+      element: ec.element,
+      count: ec.count,
+      oxStates: (ec.element.oxidationStates || []).filter(ox => ox !== 0)
+    }));
+    
+    // Check if all have oxidation states
+    if (elementOxStates.some(eos => eos.oxStates.length === 0)) {
+      return {
+        balanced: false,
+        reason: 'Some elements lack defined oxidation states.'
+      };
+    }
+    
+    // Try to find a combination that balances
+    const findBalance = (index, currentCharge, selectedOxStates) => {
+      if (index === elementOxStates.length) {
+        return currentCharge === 0 ? selectedOxStates : null;
+      }
+      
+      const current = elementOxStates[index];
+      for (const oxState of current.oxStates) {
+        const newCharge = currentCharge + (oxState * current.count);
+        const result = findBalance(index + 1, newCharge, [
+          ...selectedOxStates,
+          { element: current.element, oxState: oxState, count: current.count }
+        ]);
+        if (result) return result;
+      }
+      return null;
+    };
+    
+    const balancedStates = findBalance(0, 0, []);
+    
+    if (balancedStates) {
+      const oxInfo = balancedStates.map(bs => 
+        `${bs.element.symbol}: ${bs.oxState > 0 ? '+' : ''}${bs.oxState} (×${bs.count})`
+      ).join(', ');
+      
+      return {
+        balanced: true,
+        oxidationStates: oxInfo
+      };
+    } else {
+      return {
+        balanced: false,
+        reason: 'Could not find oxidation states that balance the total charge to zero.'
+      };
+    }
+  }
+
+  checkCommonPattern(elementCounts) {
+    // Check for common compound patterns
+    const formula = elementCounts.map(ec => 
+      ec.element.symbol + (ec.count > 1 ? ec.count : '')
+    ).join('');
+    
+    const commonFormulas = {
+      'H2O': 'Water is one of the most stable and abundant compounds.',
+      'H2O2': 'Hydrogen peroxide is a well-known oxidizer.',
+      'NaCl': 'Table salt is extremely stable.',
+      'CO2': 'Carbon dioxide is a stable and common gas.',
+      'CO': 'Carbon monoxide is stable though toxic.',
+      'NH3': 'Ammonia is a stable and important compound.',
+      'CH4': 'Methane is a stable hydrocarbon.',
+      'C2H6': 'Ethane is a stable hydrocarbon.',
+      'C3H8': 'Propane is a stable fuel.',
+      'C6H12O6': 'Glucose is a fundamental biological molecule.',
+      'H2SO4': 'Sulfuric acid is a very stable strong acid.',
+      'HCl': 'Hydrochloric acid is highly stable.',
+      'HNO3': 'Nitric acid is a stable strong acid.',
+      'CaCO3': 'Calcium carbonate (limestone) is very stable.',
+      'NaOH': 'Sodium hydroxide is a stable strong base.',
+      'KOH': 'Potassium hydroxide is a stable strong base.',
+      'CaO': 'Calcium oxide (quicklime) is stable.',
+      'MgO': 'Magnesium oxide is highly stable.',
+      'Al2O3': 'Aluminum oxide (corundum) is extremely stable.',
+      'SiO2': 'Silicon dioxide (quartz) is very stable.',
+      'Fe2O3': 'Iron(III) oxide (rust) is stable.',
+      'FeO': 'Iron(II) oxide is a known compound.',
+      'CaCl2': 'Calcium chloride is stable.',
+      'Na2SO4': 'Sodium sulfate is stable.',
+      'K2CO3': 'Potassium carbonate is stable.',
+      'C8H10N4O2': 'Caffeine - a stable alkaloid compound!'
+    };
+    
+    return commonFormulas[formula] || null;
   }
 
   showCompoundModal(analysis) {
