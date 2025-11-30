@@ -4,57 +4,213 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-    <title>Vexations</title>
+    <title>Elements - Interactive Periodic Table</title>
+    <meta name="description" content="Advanced interactive periodic table with comprehensive element data, WebSocket updates, and light/dark themes" />
     <link rel="icon" href="/favicon.ico" />
-    <link rel="stylesheet" href="/styles.css" />
-
+    
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="/styles.css" />
+    
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
-
+    
+    <!-- jQuery -->
     <script src="/jquery-3.7.1.min.js"></script>
 </head>
 
-<body>
-    <header id="statusBar" class="sticky">
-        <div class="brand">
-            <span id="playerName"></span>
-            <span id="gameCodeSpan">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-
-        </div>
-        <div class="status">
-
-            <span id="connDot" class="dot offline"></span>
-            <span id="connText">Connecting…</span>
-            <span class="sep">•</span>
-            <span>Players: <span id="playerCount">0</span></span>
-            <button id="addBotBtn" class="btn btn-sm btn-outline-primary rounded ms-2" title="Add bot to game">
-                🤖
-            </button>
+<body data-theme="light">
+    <!-- Sticky Status Bar -->
+    <header id="statusBar" class="sticky-top">
+        <div class="container-fluid">
+            <div class="row align-items-center py-2">
+                <div class="col-auto">
+                    <h1 class="brand mb-0">
+                        <span class="brand-icon">🧪</span>
+                        <span class="brand-text">Elements</span>
+                    </h1>
+                </div>
+                
+                <div class="col">
+                    <div class="status-info">
+                        <span id="connDot" class="dot offline"></span>
+                        <span id="connText">Connecting…</span>
+                        <span class="sep">•</span>
+                        <span>Clients: <span id="clientCount">0</span></span>
+                        <span class="sep">•</span>
+                        <span>Elements: <span id="elementCount">0</span></span>
+                    </div>
+                </div>
+                
+                <div class="col-auto">
+                    <button id="themeToggle" class="btn btn-outline-secondary btn-sm" title="Toggle theme">
+                        🌙
+                    </button>
+                </div>
+            </div>
         </div>
     </header>
 
-    <main id="layout">
-        <div class="card shadow p-3 mb-5 bg-body-tertiary rounded" style="">
-            
+    <!-- Main Content -->
+    <main id="mainContent" class="container-fluid py-4">
+        <!-- Controls Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label for="searchInput" class="form-label mb-1">Search Elements</label>
+                                <input 
+                                    type="text" 
+                                    id="searchInput" 
+                                    class="form-control" 
+                                    placeholder="Search by name, symbol, or number..."
+                                    aria-label="Search elements"
+                                />
+                            </div>
+                            
+                            <div class="col-12 col-md-4 col-lg-3">
+                                <label for="categoryFilter" class="form-label mb-1">Filter by Category</label>
+                                <select id="categoryFilter" class="form-select" aria-label="Filter by category">
+                                    <option value="all">All Categories</option>
+                                    <option value="alkali metal">Alkali Metals</option>
+                                    <option value="alkaline earth metal">Alkaline Earth</option>
+                                    <option value="transition metal">Transition Metals</option>
+                                    <option value="post-transition metal">Post-Transition</option>
+                                    <option value="metalloid">Metalloids</option>
+                                    <option value="diatomic nonmetal">Diatomic Nonmetals</option>
+                                    <option value="polyatomic nonmetal">Polyatomic Nonmetals</option>
+                                    <option value="noble gas">Noble Gases</option>
+                                    <option value="lanthanide">Lanthanides</option>
+                                    <option value="actinide">Actinides</option>
+                                </select>
+                            </div>
+                            
+                            <div class="col-12 col-md-2 col-lg-2">
+                                <label class="form-label mb-1 d-none d-md-block">&nbsp;</label>
+                                <button id="clearFilters" class="btn btn-secondary w-100">
+                                    Clear Filters
+                                </button>
+                            </div>
+
+                            <div class="col-12 col-lg-3">
+                                <div class="legend-compact">
+                                    <small class="text-muted d-block mb-1">Legend</small>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        <span class="legend-item"><span class="legend-color" style="background: #ff6b6b;"></span>Alkali</span>
+                                        <span class="legend-item"><span class="legend-color" style="background: #ffd93d;"></span>Alkaline</span>
+                                        <span class="legend-item"><span class="legend-color" style="background: #6bcf7f;"></span>Transition</span>
+                                        <span class="legend-item"><span class="legend-color" style="background: #4ecdc4;"></span>Nonmetal</span>
+                                        <span class="legend-item"><span class="legend-color" style="background: #c44569;"></span>Noble</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
- 
-       <div id="winnerModal" class="modal"
-            style="display:none; position:fixed; inset:0; align-items:center; justify-content:center; z-index:9999;">
-            <div class="modal-backdrop" style="position:absolute; inset:0; background:rgba(0,0,0,0.5);"></div>
-            <div class="modal-content card p-4"
-                style="position:relative; z-index:10000; max-width:420px; text-align:center;">
-                
+
+        <!-- Compound Builder Section -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm compound-builder-card">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">
+                            ⚗️ Compound Builder
+                        </h5>
+                        <div class="row g-3 align-items-center">
+                            <div class="col-12 col-md-6">
+                                <div class="selected-elements-display">
+                                    <strong>Selected Elements:</strong>
+                                    <span id="selectedElementsList" class="text-muted ms-2">
+                                        Click on elements below to select them
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="d-flex gap-2 justify-content-md-end">
+                                    <button id="buildCompoundBtn" class="btn btn-primary" disabled>
+                                        🔬 Build Compound
+                                    </button>
+                                    <button id="clearSelectionBtn" class="btn btn-outline-secondary" disabled>
+                                        Clear Selection
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Periodic Table -->
+        <div class="row">
+            <div class="col-12">
+                <div id="periodicTable" class="periodic-table-container"></div>
             </div>
         </div>
     </main>
 
-    <footer class="tiny">
-        <span>Elemental Map</span>
+    <!-- Element Details Modal -->
+    <div class="modal fade" id="elementModal" tabindex="-1" aria-labelledby="elementModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="elementModalLabel">
+                        <span class="element-symbol-large">H</span>
+                        <span>Element Details</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Content will be dynamically generated -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compound Result Modal -->
+    <div class="modal fade" id="compoundModal" tabindex="-1" aria-labelledby="compoundModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="compoundModalLabel">
+                        ⚗️ Compound Analysis
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="compoundModalBody">
+                    <!-- Content will be dynamically generated -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 py-3">
+        <div class="container-fluid text-center">
+            <small class="text-muted">
+                Elements - Advanced Interactive Periodic Table &copy; 2025
+                <span class="sep">•</span>
+                <a href="https://github.com" target="_blank" rel="noopener">GitHub</a>
+            </small>
+        </div>
     </footer>
 
+    <!-- Scripts -->
     <script src="/shared.js"></script>
     <script src="/client.js"></script>
 </body>

@@ -1,0 +1,302 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Periodic Table",
+  "type": "object",
+  "properties": {
+    "elements": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/element"
+      },
+      "minItems": 1
+    }
+  },
+  "required": ["elements"],
+  "additionalProperties": false,
+  "definitions": {
+    "numericWithUnits": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "units": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "string"
+        }
+      },
+      "required": ["value", "units"],
+      "additionalProperties": false
+    },
+    "numericRangeWithUnits": {
+      "type": "object",
+      "properties": {
+        "valueRange": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "units": {
+          "type": "string"
+        },
+        "conditions": {
+          "type": "string"
+        }
+      },
+      "required": ["valueRange", "units"],
+      "additionalProperties": false
+    },
+    "phaseProperty": {
+      "description": "A property that may be a single value, a range, or missing for that phase.",
+      "anyOf": [
+        {
+          "$ref": "#/definitions/numericWithUnits"
+        },
+        {
+          "$ref": "#/definitions/numericRangeWithUnits"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "temperatureWithUnits": {
+      "type": "object",
+      "properties": {
+        "value": { "type": "number" },
+        "units": { "type": "string", "enum": ["K", "°C", "°F"] }
+      },
+      "required": ["value", "units"],
+      "additionalProperties": false
+    },
+    "pressureWithUnits": {
+      "type": "object",
+      "properties": {
+        "value": { "type": "number" },
+        "units": {
+          "type": "string",
+          "enum": ["Pa", "kPa", "MPa", "bar", "atm", "torr"]
+        }
+      },
+      "required": ["value", "units"],
+      "additionalProperties": false
+    },
+    "isotope": {
+      "type": "object",
+      "properties": {
+        "symbol": { "type": "string" },
+        "name": { "type": "string" },
+        "massNumber": { "type": "integer", "minimum": 1 },
+        "stable": { "type": "boolean" },
+        "naturalAbundance_percent": {
+          "type": ["number", "null"],
+          "minimum": 0
+        },
+        "halfLife": {
+          "anyOf": [
+            {
+              "type": "null"
+            },
+            {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number" },
+                "units": {
+                  "type": "string",
+                  "description": "e.g., s, min, h, days, years"
+                }
+              },
+              "required": ["value", "units"],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "decayModes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["symbol", "name", "massNumber", "stable"],
+      "additionalProperties": false
+    },
+    "spectralLine": {
+      "type": "object",
+      "properties": {
+        "series": { "type": "string" },
+        "transition": { "type": "string" },
+        "wavelength_nm": { "type": "number" },
+        "intensityRelative": { "type": "number" },
+        "note": { "type": "string" }
+      },
+      "required": ["series", "transition", "wavelength_nm"],
+      "additionalProperties": false
+    },
+    "element": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string",
+          "pattern": "^[A-Z][a-z]?$"
+        },
+        "atomicNumber": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 118
+        },
+        "atomicWeight": {
+          "type": "object",
+          "properties": {
+            "value": { "type": "number" },
+            "units": { "type": "string", "enum": ["u"] },
+            "note": { "type": "string" }
+          },
+          "required": ["value", "units"],
+          "additionalProperties": false
+        },
+        "atomicRadius": {
+          "type": "object",
+          "properties": {
+            "covalent": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number" },
+                "units": { "type": "string", "enum": ["pm"] }
+              },
+              "required": ["value", "units"],
+              "additionalProperties": false
+            },
+            "vanDerWaals": {
+              "type": "object",
+              "properties": {
+                "value": { "type": "number" },
+                "units": { "type": "string", "enum": ["pm"] }
+              },
+              "required": ["value", "units"],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        },
+        "electronConfiguration": {
+          "type": "string",
+          "description": "e.g., \"1s1\" or \"[Xe] 4f14 5d10 6s2 6p2\""
+        },
+        "oxidationStates": {
+          "type": "array",
+          "items": { "type": "integer" }
+        },
+        "crystalStructure": {
+          "type": "string",
+          "description": "e.g., \"fcc\", \"bcc\", \"hcp\", \"simple cubic\", etc."
+        },
+        "meltingPoint": {
+          "$ref": "#/definitions/numericWithUnits"
+        },
+        "boilingPoint": {
+          "$ref": "#/definitions/numericWithUnits"
+        },
+        "triplePoint": {
+          "type": "object",
+          "properties": {
+            "temperature": {
+              "$ref": "#/definitions/temperatureWithUnits"
+            },
+            "pressure": {
+              "$ref": "#/definitions/pressureWithUnits"
+            }
+          },
+          "required": ["temperature", "pressure"],
+          "additionalProperties": false
+        },
+        "density": {
+          "type": "object",
+          "properties": {
+            "solid": { "$ref": "#/definitions/phaseProperty" },
+            "liquid": { "$ref": "#/definitions/phaseProperty" },
+            "gas": { "$ref": "#/definitions/phaseProperty" }
+          },
+          "additionalProperties": false
+        },
+        "specificHeat": {
+          "type": "object",
+          "properties": {
+            "solid": { "$ref": "#/definitions/phaseProperty" },
+            "liquid": { "$ref": "#/definitions/phaseProperty" },
+            "gas": { "$ref": "#/definitions/phaseProperty" }
+          },
+          "additionalProperties": false
+        },
+        "thermalConductivity": {
+          "type": "object",
+          "properties": {
+            "solid": { "$ref": "#/definitions/phaseProperty" },
+            "liquid": { "$ref": "#/definitions/phaseProperty" },
+            "gas": { "$ref": "#/definitions/phaseProperty" }
+          },
+          "additionalProperties": false
+        },
+        "spectralLines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/spectralLine"
+          }
+        },
+        "isotopes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/isotope"
+          }
+        },
+        "cost": {
+          "type": "object",
+          "description": "Economic/market info – not a physical constant; structure is intentionally flexible.",
+          "properties": {
+            "units": { "type": "string" },
+            "value": { "type": ["number", "null"] },
+            "note": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 4096
+        },
+        "group": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 18
+        },
+        "period": {
+          "type": ["integer", "null"],
+          "minimum": 1,
+          "maximum": 7
+        },
+        "block": {
+          "type": ["string", "null"],
+          "enum": ["s", "p", "d", "f", null]
+        },
+        "category": {
+          "type": "string",
+          "description": "e.g., \"alkali metal\", \"noble gas\", \"metalloid\", etc."
+        }
+      },
+      "required": [
+        "name",
+        "symbol",
+        "atomicNumber",
+        "atomicWeight",
+        "electronConfiguration",
+        "description"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
